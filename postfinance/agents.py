@@ -44,13 +44,12 @@ class Storage(object):
         self.client = MongoClient(uri, server_api=ServerApi("1"))
 
         # Send a ping to confirm a successful connection
-        try:
-            self.client.admin.command("ping")
-            print(
-                "Pinged your deployment. You successfully connected to MongoDB!"
-            )
-        except Exception as e:
-            raise e
+        # Send a ping to confirm a successful connection
+        # try:
+        #     self.client.admin.command("ping")
+        #     print("Pinged your deployment. You successfully connected to MongoDB!")
+        # except Exception as e:
+        #     raise e
 
         database_name = "postfinance"
         collection_name = "transcripts"
