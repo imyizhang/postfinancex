@@ -2,9 +2,12 @@ import json
 import re
 from typing import Callable
 
+from .input_parsers import (
+    NO_MATCH,
+    _transcript_markdown_to_json,
+    _transcript_markdown_to_text,
+)
 from .models import TaskTypes
-
-NO_MATCH = "NO MATCH"
 
 
 def get_output_parser(task: str | TaskTypes) -> Callable:
@@ -12,61 +15,9 @@ def get_output_parser(task: str | TaskTypes) -> Callable:
         return translation_json_output_parser
     if task == TaskTypes.ANNOTATION.value or task == TaskTypes.ANNOTATION:
         return annotation_json_output_parser
+    if task == TaskTypes.CHAT.value or task == TaskTypes.CHAT:
+        return chat_str_output_parser
     raise ValueError(f'Unsupported task: "{task}"')
-
-
-def _transcript_to_markdown(transcript: str) -> str:
-    return transcript
-
-
-def _transcript_markdown_to_text(markdown: str) -> str:
-    # Remove Markdown bold formatting with double asterisks (**)
-    text = re.sub(r"\*\*(.*?)\*\*", r"\1", markdown)
-    # Remove empty lines
-    text = "\n".join(
-        [line.strip() for line in text.split("\n") if line.strip() != ""]
-    )
-    return text
-
-
-def _transcript_markdown_to_json(
-    markdown: str,
-    dumps: bool = False,
-) -> dict | str:
-    # Pattern to find the title enclosed in double asterisks (**)
-    title_pattern = r"\*\*(.*)\*\*\n"
-    # Pattern to find the dialogue
-    dialogue_pattern = r"\n\*\*(.*?):\*\* \"(.*?)\""
-
-    title_match = re.search(title_pattern, markdown, re.DOTALL)
-    dialogue = re.findall(dialogue_pattern, markdown, re.S)
-
-    title = title_match.group(1).strip() if title_match else NO_MATCH
-    dialogue = [
-        {"role": role.strip(), "content": content.strip()}
-        for role, content in dialogue
-    ]
-
-    data = {
-        "title": title,
-        "dialogue": dialogue,
-    }
-    return json.dumps(data, indent=4) if dumps else data
-
-
-def transcript_json_input_parser(
-    input: str,
-    dumps: bool = False,
-) -> dict | str:
-    markdown = _transcript_to_markdown(input)
-    data = {
-        "transcript": {
-            "markdown": markdown,
-            "text": _transcript_markdown_to_text(markdown),
-            "json": _transcript_markdown_to_json(markdown),
-        },
-    }
-    return json.dumps(data, indent=4) if dumps else data
 
 
 def _unblock(output: str) -> str:
@@ -250,3 +201,7 @@ def annotation_json_output_parser(
         },
     }
     return json.dumps(data, indent=4) if dumps else data
+
+
+def chat_str_output_parser(output: str, dumps: bool = False) -> str:
+    return output

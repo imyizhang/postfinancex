@@ -180,63 +180,29 @@ Transcipt:
 
 Output:"""
 
-
-CHAT_PROMPT_TEMPLATE = """You are a virtual assistant. Given the following transcript and the current conversation between a user and the assistant, answer any user query by using information from the transcript. The response should be detailed and cite the related content in the transcript.
-
-Transcript:
-```
-**Script 01 - Inquiry About Fees and Interest on Account Statements**
-
-**Call-Center Employee (CCE):** "Hello, this is [Employee Name] from [Bank Name] Customer Service. How can I help you today?"
-
-**Customer (C):** "Hello, I'm [Customer Name]. I've reviewed my account statement and I have some questions about the fees and interest that are listed."
-
-**CCE:** "Sure, I can certainly help you with that. Could you please give me your account number and your date of birth so I can verify your identity and check your account?"
-
-**C:** "Of course, my account number is [Number] and my birthdate is [Date]. It’s specifically about a few fees that I don’t quite understand."
-
-**CCE:** "Okay, let me take a look at that. One moment please... Alright, I have your account open now. Can you tell me which fees you are referring to?"
-
-**C:** "There is a fee listed with the title 'Account Management Fee' and another one called 'Overdraft Interest.' I thought that I didn’t have any fees, and I don’t understand what the overdraft interest is."
-
-**CCE:** "I can explain that. The account management fee is a standardized fee that we charge for the administration of your account. The amount of this fee can vary depending on your account model. As for the overdraft interest: this is an interest we charge if you spend more money than is available in your account, so if you overdraw your account."
-
-**C:** "Ah, that makes sense. But I am actually quite sure that I never spent more than what was in my account."
-
-**CCE:** "I can check that again for you. One moment please... Yes, I see there was a brief moment when your account was slightly overdrawn. That could explain the overdraft interest."
-
-**C:** "Okay, I must have overlooked that. And can I do something to avoid these fees?"
-
-**CCE:** "For the account management fee, if you want an account model with lower or no fees, we could talk about switching accounts. For the overdraft interest, I recommend you regularly check your account and make sure there is enough money available before making larger expenses."
-
-**C:** "That sounds reasonable. I will think about switching accounts. Can you send me information about the different account models?"
-
-**CCE:** "Certainly, I can send you an overview by email. Is your email address up to date with us?"
-
-**C:** "Yes, it is. Thank you for your help and explanations."
-
-**CCE:** "I'm glad I could help. I will send you the information right away. If there is anything else, we are here for you. Have a nice day, [Customer Name]!"
-
-**C:** "Thank you, you too. Goodbye."
-
-**CCE:** "Goodbye!"
-```
-
-Dialogue: 
-```
-Assistant: How could I help you?
-User: How to avoid account management fees?
-Assistant: To avoid account management fees, you may consider switching to a different account model that may have lower or no fees associated with it ("For the account management fee, if you want an account model with lower or no fees, we could talk about switching accounts").
-User: What is the overdraft interest?
-Assistant: The overdraft interest is an interest charge applied when you spend more money than is available in your account, essentially when your account balance goes negative ("As for the overdraft interest: this is an interest we charge if you spend more money than is available in your account, so if you overdraw your account").
-```
+# TODO: Optimize the prompt template for chat task
+# https://dataplatform.cloud.ibm.com/docs/content/wsj/analyze-data/fm-prompt-samples.html?context=wx&audience=wdp#dialog
+CHAT_PROMPT_TEMPLATE = """You are a virtual assistant. Given the following transcript and the conversation history between a user and the assistant, your task is to answer any user query according to the information from the transcript. Your response should be detailed and cite the related content in the transcript. Citation should be enclosed within the round brakets following the response.
 
 Transcript:
 ```
 {content}
 ```
 
-Answer:
+Dialogue:
+Assistant: How could I help you?
+
+User: How to avoid account management fees?
+
+Assistant: To avoid account management fees, you may consider switching to a different account model that may have lower or no fees associated with it ("For the account management fee, if you want an account model with lower or no fees, we could talk about switching accounts").
+
+User: What is the overdraft interest?
+
+Assistant: The overdraft interest is an interest charge applied when you spend more money than is available in your account, essentially when your account balance goes negative ("As for the overdraft interest: this is an interest we charge if you spend more money than is available in your account, so if you overdraw your account").
+
+{dialogue}
+
+Assistant:
 """
 
 

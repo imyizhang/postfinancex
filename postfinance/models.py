@@ -24,6 +24,7 @@ def get_model(
     if model not in list_supported_models(task):
         raise ValueError(f'Unsupported model: "{model}" for task "{task}"')
     params = params or get_default_params()
+    print(params)
     return Model(
         model_id=model,
         params=params,
@@ -58,7 +59,8 @@ def list_supported_models(task: str | TaskTypes) -> List[str]:
         return [
             "mistralai/mixtral-8x7b-instruct-v01",
             ModelTypes.MIXTRAL_8X7B_INSTRUCT_V01_Q.value,
-            # ModelTypes.LLAMA_2_70B_CHAT.value,
+            ModelTypes.LLAMA_2_70B_CHAT.value,
+            ModelTypes.LLAMA_2_13B_CHAT.value,
         ]
     raise ValueError(f'Unsupported task: "{task}"')
 
@@ -90,7 +92,7 @@ def get_default_params() -> Dict[str, Any]:
     """
     return {
         GenTextParamsMetaNames.DECODING_METHOD: "sample",
-        GenTextParamsMetaNames.TEMPERATURE: 0.1,
+        GenTextParamsMetaNames.TEMPERATURE: 0.0,
         GenTextParamsMetaNames.TOP_P: 1.0,
         GenTextParamsMetaNames.TOP_K: 50,
         GenTextParamsMetaNames.RANDOM_SEED: 42,
