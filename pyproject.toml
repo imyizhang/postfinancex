@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postfinancex"
-version = "0.0.1"
+version = "0.0.2"
 description = "🤖 PostFinance LLM agent powered by IBM watsonx.ai ✨ PostFinance X IBM watsonx.ai"
 packages = [
     {include = "postfinance"}

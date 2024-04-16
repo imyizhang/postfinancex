@@ -1,4 +1,6 @@
-TRANSLATE_PROMPT_TEMPLATE = """Detect the language of the following transcript and translate it from the detected language to English.
+from .models import TaskTypes
+
+TRANSLATE_PROMPT_TEMPLATE = """Detect the language of the following transcript. In addition, translate the transcript from the detected language to English.
 
 Transcript:
 ```
@@ -41,10 +43,10 @@ Transcript:
 
 Output:
 ```
-Detected Language: 
+Language:
 Swiss German
 
-Translated Transcript in English:
+Translation:
 **Script 01 - Inquiry About Fees and Interest on Account Statements**
 
 **Call-Center Employee (CCE):** "Hello, this is [Employee Name] from [Bank Name] Customer Service. How can I help you today?"
@@ -87,10 +89,23 @@ Transcript:
 {content}
 ```
 
-Output:"""
+Output:
+"""
 
 
-ANNOTATE_PROMPT_TEMPLATE = """Summarize the following transcript in one sentence. In addition, given the transcript, extract the customer's questions or problems as well as the call-center employee' answers or solutions. Extraction should be detailed and cite the related content in the transcript.
+ANNOTATE_PROMPT_TEMPLATE = """Summarize the following transcript in one sentence. In addition, given the transcript, extract the customer's requests, questions or problems as well as the call-center employee's corresponding response. Extraction should be detailed and cite the related content in the transcript. Citation should be enclosed within the round brakets following the extration. Extraction from the customer's messages should be classified into one of three classes: Request, Question, Problem. 
+
+Definitions of three classes Request, Question, Problem:
+```
+Class name: Request
+Description: The customer is requesting something. They might say they are needing information about something to be sent to their email address or mail address.
+
+Class name: Question
+Description: The customer is asking a technical question or a how-to question about the products or services.
+
+Class name: Problem
+Description: The customer is describing a problem they are having. They might say they are trying something, but it's not working. They might say they are getting an error or unexpected results.
+```
 
 Transcipt:
 ```
@@ -136,23 +151,26 @@ Output:
 Summary:
 The customer called to inquire about unexpected fees and interest charges on their bank account statement, and the call-center employee explained the charges and discussed potential ways to avoid them in the future.
 
-Customer's Questions or Problems:
-1. The customer questioned the 'Account Management Fee' and 'Overdraft Interest' listed on their account statement, expressing confusion over their existence since they believed their account should not have any fees and they had not overspent their account balance ("There is a fee listed with the title 'Account Management Fee' and another one called 'Overdraft Interest.' I thought that I didn’t have any fees, and I don’t understand what the overdraft interest is.").
+Customer's requests, questions or problems:
+Customer's Question: 
+The customer questioned the 'Account Management Fee' and 'Overdraft Interest' listed on their account statement, expressing confusion over their existence since they believed their account should not have any fees and they had not overspent their account balance ("There is a fee listed with the title 'Account Management Fee' and another one called 'Overdraft Interest.' I thought that I didn’t have any fees, and I don’t understand what the overdraft interest is.").
+Call-Center Employee's Response:
+The call-center employee clarified that the 'Account Management Fee' is a standard fee for account administration, dependent on the account model, and 'Overdraft Interest' is charged when the account balance goes negative, even briefly ("The account management fee is a standardized fee that we charge for the administration of your account. The amount of this fee can vary depending on your account model. As for the overdraft interest: this is an interest we charge if you spend more money than is available in your account, so if you overdraw your account.").
 
-2. The customer was certain they never exceeded their account balance and needed clarification on the recorded overdraft ("Ah, that makes sense. But I am actually quite sure that I never spent more than what was in my account.").
+Customer's Problem: 
+The customer was certain they never exceeded their account balance and needed clarification on the recorded overdraft ("Ah, that makes sense. But I am actually quite sure that I never spent more than what was in my account.").
+Call-Center Employee's Response:
+Upon further review, the employee confirmed that the customer's account was indeed briefly overdrawn, which led to the overdraft charge ("I can check that again for you. One moment please... Yes, I see there was a brief moment when your account was slightly overdrawn. That could explain the overdraft interest.").
 
-3. The customer asked for ways to avoid these fees in the future ("Okay, I must have overlooked that. And can I do something to avoid these fees?").
+Customer's Question: 
+The customer asked for ways to avoid these fees in the future ("Okay, I must have overlooked that. And can I do something to avoid these fees?").
+Call-Center Employee's Response:
+The employee suggested regularly monitoring the account to avoid overdrafts and discussed the possibility of switching to a different account model to reduce or eliminate the management fee ("For the account management fee, if you want an account model with lower or no fees, we could talk about switching accounts. For the overdraft interest, I recommend you regularly check your account and make sure there is enough money available before making larger expenses.").
 
-4. The customer requested information about different account models that might not carry the same fees ("That sounds reasonable. I will think about switching accounts. Can you send me information about the different account models?").
-
-Call-Center Employee's Answers or Solutions:
-1. The call-center employee clarified that the 'Account Management Fee' is a standard fee for account administration, dependent on the account model, and 'Overdraft Interest' is charged when the account balance goes negative, even briefly ("The account management fee is a standardized fee that we charge for the administration of your account. The amount of this fee can vary depending on your account model. As for the overdraft interest: this is an interest we charge if you spend more money than is available in your account, so if you overdraw your account.").
-
-2. Upon further review, the employee confirmed that the customer's account was indeed briefly overdrawn, which led to the overdraft charge ("I can check that again for you. One moment please... Yes, I see there was a brief moment when your account was slightly overdrawn. That could explain the overdraft interest.").
-
-3. The employee suggested regularly monitoring the account to avoid overdrafts and discussed the possibility of switching to a different account model to reduce or eliminate the management fee ("For the account management fee, if you want an account model with lower or no fees, we could talk about switching accounts. For the overdraft interest, I recommend you regularly check your account and make sure there is enough money available before making larger expenses.").
-
-4. The employee agreed to send information on different account models via email and confirmed that they had the correct email address on file ("Certainly, I can send you an overview by email. Is your email address up to date with us?").
+Customer's Request:
+The customer requested information about different account models that might not carry the same fees ("That sounds reasonable. I will think about switching accounts. Can you send me information about the different account models?").
+Call-Center Employee's Response:
+The employee agreed to send information on different account models via email and confirmed that they had the correct email address on file ("Certainly, I can send you an overview by email. Is your email address up to date with us?").
 ```
 
 Transcipt:
@@ -204,7 +222,7 @@ Transcript:
 **CCE:** "Goodbye!"
 ```
 
-Conversation: 
+Dialogue: 
 ```
 Assistant: How could I help you?
 User: How to avoid account management fees?
@@ -218,17 +236,15 @@ Transcript:
 {content}
 ```
 
-Conversation:
-```
-{messages}
-```"""
+Answer:
+"""
 
 
-def get_prompt_template(task: str) -> str:
-    if task == "translate":
-        return TRANSLATE_PROMPT_TEMPLATE
-    if task == "annotate":
-        return ANNOTATE_PROMPT_TEMPLATE
-    if task == "chat":
-        return CHAT_PROMPT_TEMPLATE
+def get_prompt(task: str | TaskTypes, **kwargs) -> str:
+    if task == TaskTypes.TRANSLATION.value or task == TaskTypes.TRANSLATION:
+        return TRANSLATE_PROMPT_TEMPLATE.format(**kwargs)
+    if task == TaskTypes.ANNOTATION.value or task == TaskTypes.ANNOTATION:
+        return ANNOTATE_PROMPT_TEMPLATE.format(**kwargs)
+    if task == TaskTypes.CHAT.value or task == TaskTypes.CHAT:
+        return CHAT_PROMPT_TEMPLATE.format(**kwargs)
     raise ValueError(f'Unsupported task: "{task}"')
