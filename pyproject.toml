@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "postfinancex"
-version = "0.0.5"
+version = "0.0.6"
 description = "PostFinanceX Virtual Assistant powered by IBM watsonx.ai ✨ PostFinance X IBM watsonx.ai"
 packages = [
     {include = "postfinance"}
@@ -13,6 +13,7 @@ repository = "https://github.com/imyizhang/postfinancex"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+ibm_watsonx_ai = "^1.0.4"
 pymongo = "^4.7.2"
 dnspython = "^2.6.1"
 neo4j = "^5.20.0"
