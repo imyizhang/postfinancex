@@ -15,5 +15,14 @@ docs/build/
 .ipynb_checkpoints/
 *.ipynb
 
+# Deprecated
+deprecated_postfinance/
+
+# Examples
+examples/
+
+# Store
+storage/
+
 # Desktop Services Store
 .DS_Store

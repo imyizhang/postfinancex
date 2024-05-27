@@ -2,7 +2,7 @@
 
 [![GitHub][github_badge]][github_link] [![PyPI][pypi_badge]][pypi_link]
 
-**PostFinanceX** is a Python library allows you to call PostFinance LLM agent powered by IBM watsonx.ai
+**PostFinanceX** is a Python library allows you to chat with PostFinance LLM agent powered by IBM watsonx.ai
 
 
 
@@ -17,9 +17,21 @@ pip install postfinancex
 ## Quickstart
 
 ```python
-from postfinance import Agent
+from postfinance import Settings, get_agent_executor, chat
 
-agent = Agent("your_api_key_here")
+Settings.watsonx_api_key = "watsonx_api_key"
+Settings.watsonx_url = "watsonx_url"
+Settings.watsonx_project_id = "watsonx_project_id"
+Settings.jina_api_key = "jina_api_key"
+Settings.neo4j_url = "neo4j_url"
+Settings.neo4j_username = "neo4j_username"
+Settings.neo4j_password = "neo4j_password"
+Settings.mongo_uri = "mongo_uri"
+Settings.verbose = True
+
+agent_executor = get_agent_executor()
+
+chat(agent_executor, "What is the most commonly used language in the recorded customer calls?")
 ```
 
 
