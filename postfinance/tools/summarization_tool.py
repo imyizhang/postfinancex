@@ -2,6 +2,7 @@ import pathlib
 
 from langchain.tools import Tool
 from llama_index.core import (
+    Settings,
     StorageContext,
     SummaryIndex,
     load_index_from_storage,
@@ -31,6 +32,10 @@ def get_summarization_tool(settings) -> Tool:
         model="jina-embeddings-v2-base-en",
     )
 
+    # settings
+    Settings.llm = llm
+    Settings.embed_model = embed_model
+
     # index
     try:
         storage_context = StorageContext.from_defaults(
@@ -38,6 +43,7 @@ def get_summarization_tool(settings) -> Tool:
         )
         summary_index = load_index_from_storage(storage_context)
     except Exception as e:
+        print(f"Failed to load persistent index: {e}")
 
         from ..storage import mongo_storage_from_uri
 
@@ -48,14 +54,13 @@ def get_summarization_tool(settings) -> Tool:
             for c in mongo_storage.calls
         ]
 
-        summary_index = SummaryIndex(nodes, embed_model=embed_model)
+        summary_index = SummaryIndex(nodes)
         summary_index.storage_context.persist(
             persist_dir=str(pathlib.Path(settings.persist_dir) / "summary"),
         )
 
     # query engine
     summarization_engine = summary_index.as_query_engine(
-        llm,
         response_mode="tree_summarize",
     )
 

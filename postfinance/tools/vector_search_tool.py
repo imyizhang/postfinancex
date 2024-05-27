@@ -2,6 +2,7 @@ import pathlib
 
 from langchain.tools import Tool
 from llama_index.core import (
+    Settings,
     StorageContext,
     VectorStoreIndex,
     load_index_from_storage,
@@ -31,6 +32,9 @@ def get_vector_search_tool(settings) -> Tool:
         model="jina-embeddings-v2-base-en",
     )
 
+    Settings.llm = llm
+    Settings.embed_model = embed_model
+
     # index
     try:
         storage_context = StorageContext.from_defaults(
@@ -38,6 +42,7 @@ def get_vector_search_tool(settings) -> Tool:
         )
         vector_index = load_index_from_storage(storage_context)
     except Exception as e:
+        print(f"Failed to load persistent index: {e}")
 
         from ..storage import mongo_storage_from_uri
 
@@ -48,13 +53,13 @@ def get_vector_search_tool(settings) -> Tool:
             for c in mongo_storage.calls
         ]
 
-        vector_index = VectorStoreIndex(nodes, embed_model=embed_model)
+        vector_index = VectorStoreIndex(nodes)
         vector_index.storage_context.persist(
             persist_dir=str(pathlib.Path(settings.persist_dir) / "vector"),
         )
 
     # query engine
-    vector_search_engine = vector_index.as_query_engine(llm, similarity_top_k=3)
+    vector_search_engine = vector_index.as_query_engine(similarity_top_k=3)
 
     # tool
     vector_search_tool = QueryEngineTool(

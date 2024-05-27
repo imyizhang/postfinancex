@@ -21,6 +21,18 @@ class ModelParams:
 
 
 @dataclass
+class Tools:
+
+    translate: bool = False
+    graph_qa: bool = False
+    vector_search: bool = False
+    summarize: bool = False
+
+    def to_list(self):
+        return [k for k, v in self.__dict__.items() if v]
+
+
+@dataclass
 class _Settings:
 
     _watsonx_api_key: str = ""
@@ -29,9 +41,9 @@ class _Settings:
     _watsonx_model_id: str = "meta-llama/llama-3-70b-instruct"
     _watsonx_model_params: ModelParams = ModelParams(
         decoding_method="sample",
-        top_p=1.0,
+        top_p=0.9,
         top_k=50,
-        temperature=0.5,
+        temperature=0.6,
         random_seed=0,
         repetition_penalty=1.0,
         min_new_tokens=0,
@@ -43,6 +55,12 @@ class _Settings:
     _neo4j_password: str = ""
     _mongo_uri: str = ""
     _persist_dir: str = "./storage"
+    _tools: Tools = Tools(
+        translate=False,
+        graph_qa=True,
+        vector_search=True,
+        summarize=False,
+    )
     _verbose: bool = False
 
     # llm, IBM watsonx
@@ -128,6 +146,14 @@ class _Settings:
     @mongo_uri.setter
     def mongo_uri(self, value: str) -> None:
         self._mongo_uri = value
+
+    @property
+    def tools(self) -> Tools:
+        return self._tools
+
+    @tools.setter
+    def tools(self, value: Tools) -> None:
+        self._tools = value
 
     # persist
     @property

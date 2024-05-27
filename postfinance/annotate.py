@@ -177,7 +177,11 @@ def annotate(
     },
     dumps: bool = False,
     max_iterations: int = 15,
+    verbose: bool = Settings.verbose,
 ) -> dict | str:
+    if verbose:
+        model_params = json.dumps(params, indent=4, ensure_ascii=False)
+        print(f"Model parameters:\n{model_params}")
     for _ in range(max_iterations):
         try:
             return generate_json(

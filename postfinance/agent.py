@@ -61,13 +61,27 @@ def get_agent_executor(settings=Settings) -> AgentExecutor:
         params=settings.watsonx_model_params.to_dict(),
     )
 
+    if settings.verbose:
+        import json
+
+        llm_params = json.dumps(llm.params, indent=4, ensure_ascii=False)
+        print(f"Model parameters:\n{llm_params}")
+
     # tools
-    tools = [
-        get_translation_tool(settings),
-        get_graph_qa_tool(settings),
-        get_vector_search_tool(settings),
-        get_summarization_tool(settings),
-    ]
+    _tools = {
+        "translate": get_translation_tool(settings),
+        "graph_qa": get_graph_qa_tool(settings),
+        "vector_search": get_vector_search_tool(settings),
+        "summarize": get_summarization_tool(settings),
+    }
+
+    tool_names = settings.tools.to_list()
+
+    tools = [_tools[t] for t in tool_names]
+
+    if settings.verbose:
+        tool_names = ", ".join(tool_names)
+        print(f"Tools:\n{tool_names}")
 
     # memory
     memory = ConversationBufferWindowMemory(
