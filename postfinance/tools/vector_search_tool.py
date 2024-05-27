@@ -38,14 +38,14 @@ def get_vector_search_tool(settings) -> Tool:
         )
         vector_index = load_index_from_storage(storage_context)
     except Exception as e:
-        import pymongo
 
-        client = pymongo.MongoClient(settings.mongo_uri)
-        collection = client["postfinance"]["calls"]
+        from ..storage import mongo_storage_from_uri
+
+        mongo_storage = mongo_storage_from_uri(settings.mongo_uri)
 
         nodes = [
             TextNode(id_=c["id"], text=c["translation"])
-            for c in collection.find()
+            for c in mongo_storage.calls
         ]
 
         vector_index = VectorStoreIndex(nodes, embed_model=embed_model)

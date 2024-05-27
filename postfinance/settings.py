@@ -38,7 +38,7 @@ class _Settings:
         max_new_tokens=1024,
     )
     _jina_api_key: str = ""
-    _neo4j_url: str = ""
+    _neo4j_uri: str = ""
     _neo4j_username: str = ""
     _neo4j_password: str = ""
     _mongo_uri: str = ""
@@ -97,12 +97,12 @@ class _Settings:
 
     # graph, Neo4j Aura
     @property
-    def neo4j_url(self) -> str:
-        return self._neo4j_url
+    def neo4j_uri(self) -> str:
+        return self._neo4j_uri
 
-    @neo4j_url.setter
-    def neo4j_url(self, value: str) -> None:
-        self._neo4j_url = value
+    @neo4j_uri.setter
+    def neo4j_uri(self, value: str) -> None:
+        self._neo4j_uri = value
 
     @property
     def neo4j_username(self) -> str:

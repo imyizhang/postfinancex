@@ -137,7 +137,7 @@ def get_graph_qa_tool(settings) -> Tool:
 
     # graph
     graph = Neo4jGraph(
-        url=settings.neo4j_url,
+        url=settings.neo4j_uri,
         username=settings.neo4j_username,
         password=settings.neo4j_password,
     )
