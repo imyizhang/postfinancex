@@ -13,13 +13,11 @@ docs/build/
 
 # Jupyter Notebook
 .ipynb_checkpoints/
-*.ipynb
+# *.ipynb
 
 # Deprecated
 deprecated_postfinance/
-
-# Examples
-examples/
+deprecated_examples/
 
 # Store
 storage/

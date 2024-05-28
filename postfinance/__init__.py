@@ -1,3 +1,5 @@
+from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
+
 from .agent import chat, get_agent_executor
 from .annotate import annotate, get_annotator
 from .settings import Settings
@@ -12,5 +14,6 @@ __all__ = (
     "get_annotator",
     "annotate",
     "get_agent_executor",
+    "StreamlitCallbackHandler",
     "chat",
 )

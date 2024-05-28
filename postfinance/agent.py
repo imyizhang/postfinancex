@@ -1,6 +1,9 @@
+from typing import Optional
+
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from langchain.prompts import PromptTemplate
+from langchain_community.callbacks.streamlit import StreamlitCallbackHandler
 from langchain_ibm import WatsonxLLM
 
 from .settings import Settings
@@ -9,11 +12,11 @@ from .tools.summarization_tool import get_summarization_tool
 from .tools.translation_tool import get_translation_tool
 from .tools.vector_search_tool import get_vector_search_tool
 
-REACT_AGENT_PROMPT_TEMPLATE = """You are a call-center employee at PostFinance, able to have normal interactions with the customer.
+REACT_AGENT_PROMPT_TEMPLATE = """You are a call-center employee at PostFinance, able to have normal interactions with humans.
 
 Be as helpful as possible and return as much information as possible.
 
-But, do NOT answer any questions using your pre-trained knowledge, only use the information provided in the context. If the provided context is irrelevant or insufficient, just say that you don't know the answer, you need to check with your colleagues.
+But, do NOT answer any questions using your pre-trained knowledge, only use the information provided in the context. If the provided context is irrelevant or insufficient, just say that you don't know the answer.
 
 TOOLS:
 ------
@@ -22,7 +25,7 @@ You have access to the following tools:
 
 {tools}
 
-You must use one of tools above to answer the question.
+You must use at least one of tools above to answer the question.
 
 To use a tool, please use the following format:
 
@@ -69,15 +72,15 @@ def get_agent_executor(settings=Settings) -> AgentExecutor:
 
     # tools
     _tools = {
-        "translate": get_translation_tool(settings),
-        "graph_qa": get_graph_qa_tool(settings),
-        "vector_search": get_vector_search_tool(settings),
-        "summarize": get_summarization_tool(settings),
+        "translate": get_translation_tool,
+        "graph_qa": get_graph_qa_tool,
+        "vector_search": get_vector_search_tool,
+        "summarize": get_summarization_tool,
     }
 
     tool_names = settings.tools.to_list()
 
-    tools = [_tools[t] for t in tool_names]
+    tools = [_tools[t](settings) for t in tool_names]
 
     if settings.verbose:
         tool_names = ", ".join(tool_names)
@@ -107,5 +110,13 @@ def get_agent_executor(settings=Settings) -> AgentExecutor:
     return agent_executor
 
 
-def chat(agent_executor: AgentExecutor, message: str) -> str:
-    return agent_executor.invoke({"input": message})["output"]
+def chat(
+    agent_executor: AgentExecutor,
+    message: str,
+    streamlit_callback: Optional[StreamlitCallbackHandler] = None,
+) -> str:
+    if streamlit_callback is None:
+        return agent_executor.invoke({"input": message})["output"]
+    return agent_executor.invoke(
+        {"input": message}, {"callbacks": [streamlit_callback]}
+    )["output"]
