@@ -50,7 +50,7 @@ chat(agent, "What is the most commonly used language in the recorded customer ca
 
 Check out our PostFinanceX app.
 
-[![GitHub](https://badgen.net/badge/icon/GitHub?icon=github&color=black&label)](https://github.com/imyizhang/postfinancex) [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://postfinance.streamlit.app/)
+[![GitHub](https://badgen.net/badge/icon/GitHub?icon=github&color=black&label)](https://github.com/imyizhang/postfinancex-app) [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://postfinance.streamlit.app/)
 
 
 
