@@ -8,7 +8,7 @@
 
 ## Installation
 
-***Note: currently, only support Python 3.10  due to the ` dataclasses` module changes in the newer version***
+***Note: currently, only support Python 3.10  due to the `dataclasses` module changes in the newer version***
 
 ```bash
 pip install postfinancex
